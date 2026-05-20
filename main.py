@@ -1,5 +1,3 @@
-# main.py
-# main.py
 import sys
 from datetime import datetime
 
