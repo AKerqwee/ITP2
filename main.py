@@ -1,54 +1,74 @@
 # main.py
+# main.py
 import sys
 from datetime import datetime
-from pomodoro_system import log_action
-from pomodoro_system.models import PomodoroTimer, StrictPomodoroTimer, StudySession
+
+# ensure have these imports to access your defined classes and functions
+from pomodoro_system.models import PomodoroTimer, HardcoreTimer
 from pomodoro_system.storage import ProgressTracker
-from pomodoro_system.utils import validate_task_name
+from pomodoro_system.utils import validate_task_name, chunk_session_reader
 
-@log_action
 def main():
+    # initialization of your main classes
+    timer = PomodoroTimer(25)
     tracker = ProgressTracker()
-    timer = PomodoroTimer(25)  
-
-    while True:  # control loop to keep the program running until user decides to exit
-        print("\n=== 🍅 Pomodoro Focus System ===")
+    
+    while True:
+        print("\n=== Smart Pomodoro Timer ===")
         print("1. Start Focus Session")
-        print("2. Check Current Phone Access Status")
-        print("3. Exit")
+        print("2. Check Phone Access Status")
+        print("3. View History Records (Batch Load)")
+        print("4. Exit")
         
-        choice = input("Select an option: ").strip()
+        choice = input("Please enter your choice: ").strip()
         
         if choice == "1":
-            task_name = input("Enter task name: ").strip()
+            task_name = input("Enter your focus task name: ").strip()
             
-            # run validation logic to check if the task name is valid
+            # run the regex validator in utils
             if not validate_task_name(task_name):
-                print("❌ Invalid task name! (Must be 3-20 chars, alphanumeric only)")
+                print("❌ Invalid task name! (Must be 3-20 characters, alphanumeric only)")
                 continue
-            
-            # run timer logic to start the focus session
+                
+            # run the timer logic you defined in models
             timer.start_timer()
             
-            # run entity logic to create a study session record
-            session = StudySession(datetime.now().strftime("%Y-%m-%d"), timer.duration, task_name)
-            
-            # run storage logic to save the session data
+            # reading and updating JSON file persistence layer
             current_data = tracker.load_data()
             current_data["total_minutes"] += timer.duration
-            current_data["sessions"].append(session.to_dict())
+            current_data["sessions"].append({
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "duration": timer.duration,
+                "name": task_name
+            })
             tracker.save_data(current_data)
             
         elif choice == "2":
-            # run access rule logic to check if phone is accessible based on the current hour
+            # run even/odd hour access validation algorithm
             current_hour = datetime.now().hour
             timer.check_access_rule(current_hour)
             
         elif choice == "3":
+            current_data = tracker.load_data()
+            sessions = current_data.get("sessions", [])
+            if not sessions:
+                print("📭 No records found.")
+                continue
+                
+            print("\n--- History Sessions (Batch Loaded) ---")
+            # run generator iterator, loading data in batches
+            for batch in chunk_session_reader(sessions, size=2):
+                for item in batch:
+                    print(f"• [{item.get('date')}] Task: {item.get('name')} | Duration: {item.get('duration')} mins")
+                cmd = input("Press [Enter] for next batch, or 'q' to return: ").strip()
+                if cmd.lower() == 'q':
+                    break
+                    
+        elif choice == "4":
             print("Goodbye!")
             sys.exit(0)
         else:
-            print("❌ Invalid choice. Please enter 1, 2, or 3.")
+            print("❌ Invalid option. Please try again.")
 
 if __name__ == "__main__":
     main()

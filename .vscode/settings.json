@@ -1,0 +1,13 @@
+{
+      "python-envs.pythonProjects": [
+            {
+                  "path": "pomodoro_system",
+                  "envManager": "ms-python.python:venv",
+                  "packageManager": "ms-python.python:pip"
+                  
+            }
+      ],
+    "python.analysis.extraPaths": [
+        "./"
+    ]
+}
