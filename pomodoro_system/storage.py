@@ -1,4 +1,3 @@
-# pomodoro_system/storage.py
 import json
 import os
 
