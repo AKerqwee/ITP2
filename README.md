@@ -10,6 +10,10 @@
 * [cite_start]**`HardcoreTimer` (Subclass)**: Inherits from `PomodoroTimer` and overrides the access rules for strict checking, demonstrating **Inheritance and Polymorphism**[cite: 17].
 * [cite_start]**`ProgressTracker` (Processing Class)**: Responsible for reliable file I/O operations and handling state data persistence with error handling[cite: 13, 69].
 
+## 🛡️ 2. Quality Assurance & Error Handling
+ All core variables utilize snake_case, class structures follow PascalCase, and semantic docstrings accompany all methods.  Robust Exception Handling: Encapsulated standard I/O streams inside try-except blocks within storage.py to seamlessly trap IOError and JSONDecodeError without runtime crashing.  
+
+
 ### Logic Flow 
 ```text
 [User CLI Menu Input]
@@ -21,5 +25,4 @@
        ├──► Choice 2: Fetch Current Hour ➔ Check Odd/Even Access Rule Validation
        │
        └──► Choice 3: Read Historical Data ➔ Chunk Processing (Generator Mode)
-🛡️ 2. Quality Assurance & Error Handling
- All core variables utilize snake_case, class structures follow PascalCase, and semantic docstrings accompany all methods.  Robust Exception Handling: Encapsulated standard I/O streams inside try-except blocks within storage.py to seamlessly trap IOError and JSONDecodeError without runtime crashing.  
+
